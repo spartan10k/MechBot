@@ -12,9 +12,12 @@
 classdef Mechbot < handle
 
 
-properties %Not protected, but I didn't know any other solution.
+properties (Access = public)%Not protected, but I didn't know any other solution.
   a1, a2, a3; 
   b1; b2; b3;
+  d1; d2; d3;
+  d4; d5; d6;
+  
 end
 
 %
@@ -30,22 +33,23 @@ methods
   function bot = Mechbot(L, R) 
   %L and R are 3x1 vectors containing angles of the waist-knee,
   %knee-ankle, and ankle-foot frame changes.
-
+    d1 = [9.4;0]; d2 = [12;0]; d3 = [6;0];
+    d4 = [9.4;0]; d5 = [12;0]; d6 = [6;0];
   if (nargin == 0)
-    bot.a1 = SE2([9.4; 0], 0);  %waist to left knee
-    bot.a2 = SE2([12; 0], 0);   %left knee to left ankle
-    bot.a3 = SE2([6; 0], 0);    %left ankle to left foot
-    bot.a1 = SE2([9.4; 0], 0);  %waist to right knee
-    bot.a2 = SE2([12; 0], 0);   %right knee to right ankle
-    bot.a3 = SE2([6; 0], 0);    %right ankle to right foot
+    bot.a1 = SE2(d1, 0);  %waist to left knee
+    bot.a2 = SE2(d2, 0);   %left knee to left ankle
+    bot.a3 = SE2(d3, 0);    %left ankle to left foot
+    bot.b1 = SE2(d4, 0);  %waist to right knee
+    bot.b2 = SE2(d5, 0);   %right knee to right ankle
+    bot.b3 = SE2(d6, 0);    %right ankle to right foot
 
   else
-    bot.a1 = SE2([9.4; 0], L(1));   %waist to left knee
-    bot.a2 = SE2([12; 0], L(2));    %left knee to left ankle
-    bot.a3 = SE2([6; 0], L(3));     %left ankle to left foot
-    bot.b1 = SE2([9.4; 0], R(1));   %waist to right knee
-    bot.b2 = SE2([12; 0], R(2));    %right knee to right ankle
-    bot.b3 = SE2([6; 0], R(3));     %right ankle to right foot
+    bot.a1 = SE2(d1, L(1));   %waist to left knee
+    bot.a2 = SE2(d2, L(2));    %left knee to left ankle
+    bot.a3 = SE2(d3, L(3));     %left ankle to left foot
+    bot.b1 = SE2(d4, R(1));   %waist to right knee
+    bot.b2 = SE2(d5, R(2));    %right knee to right ankle
+    bot.b3 = SE2(d6, R(3));     %right ankle to right foot
 
   end
 
@@ -71,7 +75,7 @@ methods
   function display(bot)
       hold on
       xLeft = zeros(4,1);   %x coordinates for left leg
-      xLeft(2) = 9.4*cos(getRotationAngle(bot.a1)); 
+      xLeft(2) = getLength(bot.a1)*cos(getRotationAngle(bot.a1)); 
       xLeft(3) = xLeft(2)+12*cos(getRotationAngle(bot.a2));
       xLeft(4) = xLeft(3)+6*cos(getRotationAngle(bot.a3));
       yLeft = zeros(4,1);   %y coordinates for left leg
@@ -95,6 +99,33 @@ methods
 %can fix this or have any optimztion you can implement. 
   end
   
+  %------------------------- getLength -------------------------
+  %
+  %  Get the link length of the frame/object.
+  %
+  %
+  function Lx = getLength(x)
+      Lx = x.getTransition();
+%       if (x(5) == 'a')
+%           
+%         if (x(6) == '1')
+%             Lx = d1(1);
+%         elseif(x(6) == '2')
+%             Lx = d2(2);
+%         elseif(x(6) == '3')
+%             Lx = d3(3);
+%         end
+%         
+%       else
+%           if(x(6) == '4')
+%              Lx = d4(4);
+%            elseif(x(6) == '5')
+%              Lx = d5(5)
+%            elseif(x(6) == '6')
+%              Lx = d6(6);
+%           end
+%       end
+   end  
 end
 
 end
